@@ -3,6 +3,8 @@
 
 DROP TABLE IF EXISTS user;
 DROP TABLE IF EXISTS post;
+DROP TABLE IF EXISTS products;
+DROP TABLE IF EXISTS cart;
 
 CREATE TABLE user (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -19,16 +21,17 @@ CREATE TABLE post (
   FOREIGN KEY (author_id) REFERENCES user (id)
 );
 
-create table products(
-  id integer primary key AUTOINCREMENT,
-  name text not null,
-  price decimal(10,2) not null
+CREATE TABLE products (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  NAME TEXT NOT NULL,
+  price DECIMAL(10,2) NOT NULL
 );
-create table cart (
-  id integer primary key AUTOINCREMENT,
+
+CREATE TABLE cart (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
   shopper_id 
-  created timestamp not null default current_timestamp,
-  product_d text not null,
-  quantity integer,
-  foreign key (product_id) references products(id)
+  created TIMESTAMP NOT NULL DEFAULT current_timestamp,
+  product_id TEXT NOT NULL,
+  quantity INTEGER,
+  FOREIGN KEY (product_id) REFERENCES products(id)
 );
