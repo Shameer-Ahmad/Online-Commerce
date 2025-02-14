@@ -1,6 +1,12 @@
 import secrets
-from flask import session, request, g
+from flask import Blueprint, session, request, g, render_template
 
+bp = Blueprint("cart", __name__, url_prefix="/cart")
+
+@bp.route("/")
+def view_cart():
+    return render_template("cart.html")
+    
 def get_db():
     import sqlite3
     if 'db' not in g:
