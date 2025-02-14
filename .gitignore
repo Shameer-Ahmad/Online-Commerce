@@ -8,3 +8,8 @@ ENV
 
 # Local files from running database 
 __pycache__
+
+# Ignore 
+northwind-SQLite3
+
+#testing
