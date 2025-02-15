@@ -29,9 +29,9 @@ CREATE TABLE products (
 
 CREATE TABLE cart (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
-  shopper_id 
+  shopper_id INTEGER NOT NULL
   created TIMESTAMP NOT NULL DEFAULT current_timestamp,
-  product_id TEXT NOT NULL,
-  quantity INTEGER,
+  product_id INTEGER NOT NULL,
+  quantity INTEGER NOT NULL,
   FOREIGN KEY (product_id) REFERENCES products(id)
 );
