@@ -33,5 +33,6 @@ CREATE TABLE cart (
   created TIMESTAMP NOT NULL DEFAULT current_timestamp,
   product_id INTEGER NOT NULL,
   quantity INTEGER NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (product_id) REFERENCES products(id)
 );
