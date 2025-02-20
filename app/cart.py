@@ -5,7 +5,7 @@ bp = Blueprint("cart", __name__, url_prefix="/cart")
 
 @bp.route("/")
 def view_cart():
-    return render_template("cart.html")
+    return render_template("cart.html", cart=[])
     
 def get_db():
     import sqlite3
