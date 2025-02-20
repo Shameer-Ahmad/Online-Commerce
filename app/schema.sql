@@ -29,7 +29,7 @@ CREATE TABLE products (
 
 CREATE TABLE cart (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
-  shopper_id INTEGER NOT NULL
+  shopper_id INTEGER NOT NULL,
   created TIMESTAMP NOT NULL DEFAULT current_timestamp,
   product_id INTEGER NOT NULL,
   quantity INTEGER NOT NULL,

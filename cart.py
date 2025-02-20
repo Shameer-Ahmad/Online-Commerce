@@ -36,16 +36,18 @@ def get_items():
     items = cursor.fetchall()
     return [{'id': row[0], 'quantity': row[1], 'name': row[2], 'price': row[3]} for row in items]
 
-@bp.route("/update_quantity/<int: item_id>", methods=["POST"])
+@bp.route("/update_quantity/<int:item_id>", methods=["POST"])
 def update_quantity(item_id):
     db = get_db()
     quantity = int(request.form.get("quantity", 1))
     db.execute("UPDATE cart SET quantity = ? WHERE id = ?", (quantity, item_id))
     db.commit()
+    return "Quantity Updated.", 200
 
-@bp.rout("/remoce/<int: item_id>")
+@bp.route("/remove/<int:item_id>")
 def remove(item_id):
-    db = get_db
-    db.executre("DELETE FROM cart WHERE id = ?", (item_id))
+    db = get_db()
+    db.execute("DELETE FROM cart WHERE id = ?", (item_id))
     db.commit()
+    return "Item Removed.", 200
     
