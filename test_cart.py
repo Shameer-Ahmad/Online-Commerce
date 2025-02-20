@@ -1,6 +1,6 @@
 import secrets
 from flask import Flask, session, g
-from cart import check_id, add_to_cart, get_items, get_db
+from cart import check_id, add_to_cart, get_items, get_db, remove
 
 app = Flask(__name__)
 app.secret_key = 'secretkey'
@@ -35,3 +35,11 @@ with app.app_context():
         # Test get_items function
         items = get_items()
         print(items)
+
+        # Test remove function
+        remove("1")
+        print("Removed from cart")
+
+        # Test get_items function
+        updated_items = get_items()
+        print(updated_items)
