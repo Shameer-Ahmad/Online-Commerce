@@ -52,11 +52,8 @@ def remove(product_id):
     db.execute("DELETE FROM cart WHERE id = ?", (product_id))
     db.commit()
     return "Item Removed.", 200
-@bp.route("/remove/<int: item_id>")
-def remove(item_id):
-    db = get_db()
-    db.executre("DELETE FROM cart WHERE id = ?", (item_id))
-    db.commit()
+
+
 
 
 def clean():
