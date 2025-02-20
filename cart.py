@@ -52,4 +52,26 @@ def remove(product_id):
     db.execute("DELETE FROM cart WHERE id = ?", (product_id))
     db.commit()
     return "Item Removed.", 200
+@bp.route("/remove/<int: item_id>")
+def remove(item_id):
+    db = get_db()
+    db.executre("DELETE FROM cart WHERE id = ?", (item_id))
+    db.commit()
+
+
+def clean():
+    db = get_db()
+    shopper_id = check_id()
+    db.execute("DELETE FROM cart WHERE shopper_id = ? AND created_at < datetime('now', '-1 mon)")
+    db.commit()
+
+@bp.route('/checkout', methods=['POST'])
+def checkout():
+    db = get_db()
+    shopper_id = check_id()
+
+    items = db.execute("SELECT product_id, quantity FROM cart WHERE shopper_id = ?", (shopper_id,)).fetchall()
+
     
+
+
