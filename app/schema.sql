@@ -44,7 +44,7 @@ CREATE TABLE orders (
   shopper_id INTEGER NOT NULL,
   quantity INTEGER NOT NULL,
   price DECIMAL(10,2) NOT NULL,
-  order_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,,
+  order_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (user_id) REFERENCES user(id),
   FOREIGN KEY (product_id) REFERENCES products(id)
 )
