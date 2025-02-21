@@ -76,23 +76,12 @@ def database():
     db = get_db()
 
     # Fetch first 10 products
-    cursor = db.execute('SELECT * FROM Products LIMIT 10')
+    cursor = db.execute('SELECT * FROM Orders LIMIT 10')
     products = cursor.fetchall()
 
     # Fetch first 10 categories
-    cursor = db.execute('SELECT * FROM Categories LIMIT 10')
+    cursor = db.execute('SELECT * FROM Employees LIMIT 10')
     categories = cursor.fetchall()
-
-    # Convert image blobs to Base64
-    categories_list = []
-    for category in categories:
-        category_dict = dict(category)
-        
-        import base64
-        if category_dict["Picture"]:  # If Picture exists
-            category_dict["Picture"] = base64.b64encode(category_dict["Picture"]).decode('utf-8')
-
-        categories_list.append(category_dict)
 
     return render_template('auth/database.html', products=products, categories=categories)
 
