@@ -16,15 +16,19 @@
         <td>{{item.price}}</td>
         <td>
 
-            <form action="{{url_for('cart.update_quantity',item_id=item.id )}}" method="POST"> # This calls url /cart/update_quantity/10 if say the quantity was 10
+            <form action="{{url_for('cart.update_quantity',item_id=item.id )}}" method="POST"> <!-- This calls url /cart/update_quantity/10 if say the quantity was 10 -->
                 <input type="number" name="quantity" value="{{item.quantity}}" min="1">
                 <button type="submit">Update</button>
             </form>
         </td>
         <td>${{ item.price * item.quantity}}</td> # Total price of item
         <td>
-            <a href="{{url_for('cart.remove', item_id=item.id) }}"> # Deletes item from cart
+            <a href="{{url_for('cart.remove', item_id=item.id) }}">Remove</a> <!-- Deletes item from cart --> 
         </td>
     </tr>
     {% endfor %}
+<<<<<<< HEAD:cart.html
 </table>
+=======
+</table>
+>>>>>>> origin/shopping-branch:app/templates/cart.html
