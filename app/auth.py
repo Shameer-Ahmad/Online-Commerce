@@ -43,7 +43,13 @@ def login():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        return f"You user name is {username} and password is {password}"
+        db = get_db()
+        cursor = db.execute('SELECT ProductName FROM Products ORDER BY RANDOM() LIMIT 1')
+        product = cursor.fetchone()
+        product_name = product['ProductName'] if product else 'No product found'
+        
+        return "Your username is {}<br>Your password is {}<br>Accessing a random product from northwind: {}".format(username, password, product_name)
+        
         """ db = get_db()
         error = None
         user = db.execute(
@@ -63,6 +69,32 @@ def login():
         flash(error)
     """
     return render_template('auth/login.html') 
+
+
+@bp.route('/database')
+def database():
+    db = get_db()
+
+    # Fetch first 10 products
+    cursor = db.execute('SELECT * FROM Products LIMIT 10')
+    products = cursor.fetchall()
+
+    # Fetch first 10 categories
+    cursor = db.execute('SELECT * FROM Categories LIMIT 10')
+    categories = cursor.fetchall()
+
+    # Convert image blobs to Base64
+    categories_list = []
+    for category in categories:
+        category_dict = dict(category)
+        
+        import base64
+        if category_dict["Picture"]:  # If Picture exists
+            category_dict["Picture"] = base64.b64encode(category_dict["Picture"]).decode('utf-8')
+
+        categories_list.append(category_dict)
+
+    return render_template('auth/database.html', products=products, categories=categories)
 
 @bp.before_app_request
 def load_logged_in_user():

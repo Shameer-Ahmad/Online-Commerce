@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Database View</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='database.css') }}">
+</head>
+<body>
+    <h2>Products and Categories Tables</h2>
+
+    <div class="table-container">
+        <!-- Products Table -->
+        <div>
+            <h3>Products</h3>
+            <table>
+                <tr>
+                    {% for column in products[0].keys() %}
+                        <th>{{ column }}</th>
+                    {% endfor %}
+                </tr>
+                {% for product in products %}
+                <tr>
+                    {% for value in product %}
+                        <td>{{ value }}</td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+
+        <!-- Categories Table -->
+<div>
+    <h3>Categories</h3>
+    <table>
+        <tr>
+            {% for column in categories[0].keys() %}
+                <th>{{ column }}</th>
+            {% endfor %}
+        </tr>
+        {% for category in categories %}
+        <tr>
+            {% for value in category %}
+                <td>
+                    {% if loop.index == 4 %} <!-- If it's the Picture column -->
+                        {{"Can't diplay image"}}
+                    {% else %}
+                        {{ value }}
+                    {% endif %}
+                </td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+    </div>
+</body>
+</html>
