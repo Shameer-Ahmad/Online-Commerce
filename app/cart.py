@@ -65,10 +65,38 @@ def clean():
 @bp.route('/checkout', methods=['POST'])
 def checkout():
     db = get_db()
+
+
+    if 'user_id' not in session:
+        return "Please Log In"
+        #!! We will need to redirect to the log in page"
+
+
     shopper_id = check_id()
 
-    items = db.execute("SELECT product_id, quantity FROM cart WHERE shopper_id = ?", (shopper_id,)).fetchall()
-
     
+
+    items = db.execute("SELECT cart.product_id, cart.quantity, products.price FROM cart WHERE shopper_id = ?", (shopper_id,)).fetchall()
+
+    # Get total cost of items
+    for item in items:
+        cost += item['quantity'] * item['price']
+    
+
+
+    # Grabs the newest id label to make this new order have that id label
+    order_id = db.execute("SELECT last_insert_rowid() AS id").fetchone()['id']
+
+    # Insert every item from the cart associated with this user into the orders table
+    for item in items:
+        db.execute("INSERT INTO orders (order_id, product_id, quantity, price) VALUES (?, ?, ?, ?)", (order_id, item['product_id'], item['quantity'], item['price'] ))
+    
+    # Delete that users old items from the cart
+    db.execute("DELETE FROM cart WHERE shopper_id = ?", (shopper_id))
+    
+    db.commit()
+
+    # Delete anything from the entire cart where the product has been there for over a month
+    clean()
 
 

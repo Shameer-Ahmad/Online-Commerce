@@ -36,3 +36,15 @@ CREATE TABLE cart (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (product_id) REFERENCES products(id)
 );
+
+CREATE TABLE orders (
+  id INTEGER PRIMARY KEY AUTOINCREMENT, 
+  order_id INTEGER NOT NULL,
+  user_id INTEGER,
+  shopper_id INTEGER NOT NULL,
+  quantity INTEGER NOT NULL,
+  price DECIMAL(10,2) NOT NULL,
+  order_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,,
+  FOREIGN KEY (user_id) REFERENCES user(id),
+  FOREIGN KEY (product_id) REFERENCES products(id)
+)
