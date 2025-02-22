@@ -31,5 +31,8 @@ def create_app(test_config=None):
 
     from . import landing 
     app.register_blueprint(landing.bp)
+
+    from . import cart 
+    app.register_blueprint(cart.bp)
     
     return app 
