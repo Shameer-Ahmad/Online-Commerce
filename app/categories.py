@@ -3,17 +3,30 @@ from app.db import get_db
 
 bp = Blueprint("categories", __name__, url_prefix="/categories")
 
-@bp.route("/<category_name>")
-def category_items(category_name):
+@bp.route("/<int:category_id>/")
+def category_items(category_id, category_name=None):
+    """Show products in a selected category using CategoryID, but fetch CategoryName if missing."""
+
     db = get_db()
-    #fetching the products under each category 
+
+    # If category_name is not provided, fetch it from the database
+    if category_name is None:
+        cursor = db.execute(
+            "SELECT CategoryName FROM Categories WHERE CategoryID = ?", (category_id,)
+        )
+        category = cursor.fetchone()
+        if not category:
+            return "Category not found", 404
+        category_name = category[0]  # Extract name from tuple
+
+    # Get products using CategoryID
     cursor = db.execute(
         "SELECT ProductID, ProductName, UnitPrice, UnitsInStock, Discontinued "
-        "FROM 'Alphabetical list of products' WHERE CategoryName = ?", 
-        (category_name,)
+        "FROM 'Alphabetical list of products' WHERE CategoryID = ?", 
+        (category_id,)
     )
     products = cursor.fetchall()
-    if not products:
-        return "Category not found or no products available", 404
+
     db.close()
+
     return render_template("categories.html", category_name=category_name, products=products)
