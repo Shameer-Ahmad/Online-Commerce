@@ -26,13 +26,10 @@ def create_app(test_config=None):
     from . import db
     db.init_app(app)
     
-    from . import auth
+    from . import auth, landing, cart, categories
     app.register_blueprint(auth.bp)
-
-    from . import landing 
     app.register_blueprint(landing.bp)
-
-    from . import cart 
     app.register_blueprint(cart.bp)
+    app.register_blueprint(categories.bp)
     
     return app 
