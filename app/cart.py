@@ -55,14 +55,14 @@ def update_quantity(item_id):
     db.execute("UPDATE cart SET quantity = ? WHERE id = ?", (quantity, item_id))
     db.commit()
     return "Quantity Updated.", 200
-'''
 
-# @bp.route("/remove/<int:item_id>")
+@bp.route("/remove/<int:item_id>")
 def remove(product_id):
     db = get_db()
     db.execute("DELETE FROM cart WHERE id = ?", (product_id,))
     db.commit()
     return "Item Removed.", 200
+'''
 
 @bp.route('/clean')
 def clean():
