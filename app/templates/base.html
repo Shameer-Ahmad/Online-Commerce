@@ -5,17 +5,19 @@
   <h1>Aviram's Shoppers</h1>
   <div class="dropdown">
     <button class="dropbtn">Categories ▼</button>
-    <div class="dropdown-content">
       <div class="dropdown-content">
-        <a href="{{ url_for('categories.category_items', category_name='Beverages') }}">Beverages</a>
-        <a href="{{ url_for('categories.category_items', category_name='Condiments') }}">Condiments</a>
-        <a href="{{ url_for('categories.category_items', category_name='Confections') }}">Confections</a>
-        <a href="{{ url_for('categories.category_items', category_name='Dairy Products') }}">Dairy Products</a>
-        <a href="{{ url_for('categories.category_items', category_name='Grains/Cereals') }}">Grains/Cereals</a>
-        <a href="{{ url_for('categories.category_items', category_name='Meat/Poultry') }}">Meat/Poultry</a>
-        <a href="{{ url_for('categories.category_items', category_name='Produce') }}">Produce</a>
-        <a href="{{ url_for('categories.category_items', category_name='Seafood') }}">Seafood</a>
-  </div>
+        <div class="dropdown-content">
+          <a href="{{ url_for('categories.category_items', category_name='Beverages') }}">Beverages</a>
+          <a href="{{ url_for('categories.category_items', category_name='Condiments') }}">Condiments</a>
+          <a href="{{ url_for('categories.category_items', category_name='Confections') }}">Confections</a>
+          <a href="{{ url_for('categories.category_items', category_name='Dairy Products') }}">Dairy Products</a>
+          <a href="{{ url_for('categories.category_items', category_name='Grains/Cereals') }}">Grains/Cereals</a>
+          <a href="{{ url_for('categories.category_items', category_name='Meat/Poultry') }}">Meat/Poultry</a>
+          <a href="{{ url_for('categories.category_items', category_name='Produce') }}">Produce</a>
+          <a href="{{ url_for('categories.category_items', category_name='Seafood') }}">Seafood</a>
+      </div>
+    </div> 
+  </div>  
   <ul>
     {% if g.user %}
       <li><span>{{ g.user['username'] }}</span>
