@@ -1,12 +1,15 @@
 import secrets
-from flask import Blueprint, session, request, g, render_template
+from flask import Blueprint, session, request, g, render_template, redirect, url_for
+
+from app.db import get_db
 
 bp = Blueprint("cart", __name__, url_prefix="/cart")
 
-@bp.route("/cart")
+@bp.route("/")
 def view_cart():
-    return render_template("cart.html", cart=[])
-    
+    return render_template("cart.html", cart=[], total=calculate_total()) # ADD CART ITEMS LATER!!
+
+"""   
 def get_db():
     import sqlite3
     if 'db' not in g:
@@ -16,7 +19,7 @@ def get_db():
         g.db.execute('INSERT INTO products (id, name, price) VALUES ("1", "Product 1", 10.0)')
         g.db.execute('INSERT INTO products (id, name, price) VALUES ("3", "Product 3", 30.0)')
     return g.db
-
+"""
 def check_id():
     if "shopper_id" not in session:
         session["shopper_id"] = secrets.token_hex(16)
@@ -28,6 +31,10 @@ def add_to_cart(product_id, quantity):
     db.execute("insert into cart (shopper_id, product_id, quantity) values (?,?,?)", 
                (shopper_id, product_id, quantity),)
     db.commit()
+
+def calculate_total():
+    items=get_items()
+    return sum([item['price'] * item['quantity'] for item in items])
 
 def get_items():
     db = get_db()
@@ -49,41 +56,33 @@ def update_quantity(item_id):
 # @bp.route("/remove/<int:item_id>")
 def remove(product_id):
     db = get_db()
-    db.execute("DELETE FROM cart WHERE id = ?", (product_id))
+    db.execute("DELETE FROM cart WHERE id = ?", (product_id,))
     db.commit()
     return "Item Removed.", 200
 
-
-
-
+@bp.route('/clean')
 def clean():
     db = get_db()
     shopper_id = check_id()
-    db.execute("DELETE FROM cart WHERE shopper_id = ? AND created_at < datetime('now', '-1 mon)")
+    db.execute("DELETE FROM cart WHERE shopper_id = ? AND created_at < datetime('now', '-1 month')", (shopper_id,))
     db.commit()
 
 @bp.route('/checkout', methods=['POST'])
 def checkout():
     db = get_db()
 
-
     if 'user_id' not in session:
         return "Please Log In"
         #!! We will need to redirect to the log in page"
 
-
     shopper_id = check_id()
-
-    
-
     items = db.execute("SELECT cart.product_id, cart.quantity, products.price FROM cart WHERE shopper_id = ?", (shopper_id,)).fetchall()
 
     # Get total cost of items
+    cost = 0
     for item in items:
         cost += item['quantity'] * item['price']
     
-
-
     # Grabs the newest id label to make this new order have that id label
     order_id = db.execute("SELECT last_insert_rowid() AS id").fetchone()['id']
 
@@ -100,3 +99,14 @@ def checkout():
     clean()
 
 
+@bp.route("/add_test_items")
+def add_test_items():
+    add_to_cart("1", 2)
+    add_to_cart("3", 3)
+    return redirect(url_for("cart.view_cart"))
+
+@bp.route("/debug_cart")
+def debug_cart():
+    db = get_db()
+    items = db.execute("SELECT * FROM cart").fetchall()
+    return str([dict(row) for row in items])

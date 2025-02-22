@@ -2,7 +2,7 @@
 <title>{% block title %}{% endblock %} - Aviram's Shoppers</title>
 <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 <nav>
-  <h1>Aviram's Shoppers</h1>
+  <h1><a href="{{ url_for('landing.landing_page') }}" class="header-link">Aviram's Shoppers</a></h1>
   <div class = "nav-center"> 
     <div class="dropdown">
       <button class="dropbtn">Categories ▼</button>

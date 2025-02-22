@@ -1,11 +1,12 @@
 import secrets
 from flask import Flask, session, g
-from cart import check_id, add_to_cart, get_items, get_db, remove
+from cart import check_id, add_to_cart, get_items, remove
+from app.db import get_db
 
 app = Flask(__name__)
 app.secret_key = 'secretkey'
 
-def get_db():
+"""def get_db():
     import sqlite3
     if 'db' not in g:
         g.db = sqlite3.connect(':memory:')
@@ -13,7 +14,7 @@ def get_db():
         g.db.execute('CREATE TABLE products (id TEXT PRIMARY KEY, name TEXT, price REAL)')
         g.db.execute('INSERT INTO products (id, name, price) VALUES ("1", "Product 1", 10.0)')
         g.db.execute('INSERT INTO products (id, name, price) VALUES ("3", "Product 3", 30.0)')
-    return g.db
+    return g.db"""
 
 # Mock session setup
 with app.app_context():
