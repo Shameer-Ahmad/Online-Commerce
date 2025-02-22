@@ -2,9 +2,10 @@
 -- Drop any existing data and create empty tables.
 
 DROP TABLE IF EXISTS user;
-DROP TABLE IF EXISTS post;
-DROP TABLE IF EXISTS products;
+-- DROP TABLE IF EXISTS post;
+-- DROP TABLE IF EXISTS products;
 DROP TABLE IF EXISTS cart;
+DROP TABLE IF EXISTS order_items;
 
 CREATE TABLE user (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -12,6 +13,7 @@ CREATE TABLE user (
   password TEXT NOT NULL
 );
 
+/*
 CREATE TABLE post (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   author_id INTEGER NOT NULL,
@@ -25,7 +27,8 @@ CREATE TABLE products (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   NAME TEXT NOT NULL,
   price DECIMAL(10,2) NOT NULL
-);
+); 
+*/
 
 CREATE TABLE cart (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -36,7 +39,7 @@ CREATE TABLE cart (
   FOREIGN KEY (product_id) REFERENCES products(id)
 );
 
-CREATE TABLE orders (
+CREATE TABLE order_items (
   id INTEGER PRIMARY KEY AUTOINCREMENT, 
   order_id INTEGER NOT NULL,
   user_id INTEGER,
@@ -46,4 +49,4 @@ CREATE TABLE orders (
   order_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (user_id) REFERENCES user(id),
   FOREIGN KEY (product_id) REFERENCES products(id)
-)
+);

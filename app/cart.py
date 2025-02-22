@@ -1,13 +1,13 @@
 import secrets
 from flask import Blueprint, session, request, g, render_template, redirect, url_for
 
-from app.db import get_db
+from app.db import get_db, init_db
 
 bp = Blueprint("cart", __name__, url_prefix="/cart")
 
 @bp.route("/")
 def view_cart():
-    return render_template("cart.html", cart=[], total=calculate_total()) # ADD CART ITEMS LATER!!
+    return render_template("cart.html", cart=get_items(), total=calculate_total())
 
 """   
 def get_db():
@@ -39,7 +39,11 @@ def calculate_total():
 def get_items():
     db = get_db()
     shopper_id = check_id()
-    cursor = db.execute("SELECT cart.id, cart.quantity, products.name, products.price FROM cart JOIN products ON product_id = products.id WHERE cart.shopper_id = ?", (shopper_id,))
+    cursor = db.execute("""SELECT cart.id, cart.quantity, Products.ProductName, Products.UnitPrice 
+                        FROM cart 
+                        JOIN products ON cart.product_id = Products.ProductID 
+                        WHERE cart.shopper_id = ?
+                        """, (shopper_id,))
     items = cursor.fetchall()
     return [{'id': row[0], 'quantity': row[1], 'name': row[2], 'price': row[3]} for row in items]
 
@@ -86,9 +90,9 @@ def checkout():
     # Grabs the newest id label to make this new order have that id label
     order_id = db.execute("SELECT last_insert_rowid() AS id").fetchone()['id']
 
-    # Insert every item from the cart associated with this user into the orders table
+    # Insert every item from the cart associated with this user into the order_items table
     for item in items:
-        db.execute("INSERT INTO orders (order_id, product_id, quantity, price) VALUES (?, ?, ?, ?)", (order_id, item['product_id'], item['quantity'], item['price'] ))
+        db.execute("INSERT INTO order_items (order_id, product_id, quantity, price) VALUES (?, ?, ?, ?)", (order_id, item['product_id'], item['quantity'], item['price'] ))
     
     # Delete that users old items from the cart
     db.execute("DELETE FROM cart WHERE shopper_id = ?", (shopper_id))
