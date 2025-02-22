@@ -3,7 +3,7 @@ body { max-width: 960px; margin: 0 auto; background: white; }
 h1 { font-family: serif; color: #377ba8; margin: 1rem 0; }
 a { color: #377ba8; }
 hr { border: none; border-top: 1px solid lightgray; }
-nav { background: lightgray; display: flex; align-items: center; padding: 0 0.5rem; }
+nav { background: lightgray; display: flex; align-items: center; justify-content: space-between; padding: 0 0.5rem; }
 nav h1 { flex: auto; margin: 0; }
 nav h1 a { text-decoration: none; padding: 0.25rem 0.5rem; }
 nav ul  { display: flex; list-style: none; margin: 0; padding: 0; }
@@ -36,8 +36,9 @@ input[type=submit] { align-self: start; min-width: 10em; }
     padding: 0.3rem 0.6rem;
     font-size: 0.85rem;
     border: 1px solid #377ba8;
-    border-radius: 3px;
+    border-radius:0;
     cursor: pointer;
+    white-space: nowrap;
 }
 
 .dropdown-content {
@@ -96,4 +97,49 @@ input[type=submit] { align-self: start; min-width: 10em; }
 
 .category-card:hover {
     transform: scale(1.05);
+}
+
+.search-form {
+    flex-grow:0; /* Allows search bar to expand */
+    display: flex;
+    justify-content: center; /* Centers search bar */
+    margin-right: 6rem;
+}
+
+.search-form input {
+    padding: 0.4rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 250px; /* Keeps width reasonable */
+}
+
+.search-form button {
+    padding: 0.4rem;
+    background-color: #377ba8;
+    color: white;
+    border: none;
+    cursor: pointer;
+    margin-left: 5px;
+}
+
+.search-form button:hover {
+    background-color: #275a80;
+}
+
+/* Move login/register/cart to the right */
+.nav-right {
+    display: flex;
+    list-style: none;
+    margin-left: auto; /* Pushes login/register section to the right */
+}
+
+.nav-right li {
+    margin-left: 1rem;
+}
+
+.nav-center {
+    display: flex;
+    align-items: center;  /* Aligns vertically */
+    gap: 1rem; /* Adds slight spacing between them */
+    flex-wrap: nowrap
 }

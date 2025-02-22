@@ -3,21 +3,26 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 <nav>
   <h1>Aviram's Shoppers</h1>
-  <div class="dropdown">
-    <button class="dropbtn">Categories ▼</button>
-      <div class="dropdown-content">
-        <div class="dropdown-content">
-          <a href="{{ url_for('categories.category_items', category_id=1, category_name='Beverages') }}">Beverages</a>
-          <a href="{{ url_for('categories.category_items', category_id=2, category_name='Condiments') }}">Condiments</a>
-          <a href="{{ url_for('categories.category_items', category_id=3, category_name='Confections') }}">Confections</a>
-          <a href="{{ url_for('categories.category_items', category_id=4, category_name='Dairy Products') }}">Dairy Products</a>
-          <a href="{{ url_for('categories.category_items', category_id=5, category_name='Grains/Cereals') }}">Grains/Cereals</a>
-          <a href="{{ url_for('categories.category_items', category_id=6, category_name='Meat/Poultry') }}">Meat/Poultry</a>
-          <a href="{{ url_for('categories.category_items', category_id=7, category_name='Produce') }}">Produce</a>
-          <a href="{{ url_for('categories.category_items', category_id=8, category_name='Seafood') }}">Seafood</a>
-      </div>
-    </div> 
-  </div>  
+  <div class = "nav-center"> 
+    <div class="dropdown">
+      <button class="dropbtn">Categories ▼</button>
+          <div class="dropdown-content">
+            <a href="{{ url_for('categories.category_items', category_id=1, category_name='Beverages') }}">Beverages</a>
+            <a href="{{ url_for('categories.category_items', category_id=2, category_name='Condiments') }}">Condiments</a>
+            <a href="{{ url_for('categories.category_items', category_id=3, category_name='Confections') }}">Confections</a>
+            <a href="{{ url_for('categories.category_items', category_id=4, category_name='Dairy Products') }}">Dairy Products</a>
+            <a href="{{ url_for('categories.category_items', category_id=5, category_name='Grains/Cereals') }}">Grains/Cereals</a>
+            <a href="{{ url_for('categories.category_items', category_id=6, category_name='Meat/Poultry') }}">Meat/Poultry</a>
+            <a href="{{ url_for('categories.category_items', category_id=7, category_name='Produce') }}">Produce</a>
+            <a href="{{ url_for('categories.category_items', category_id=8, category_name='Seafood') }}">Seafood</a>
+      </div> 
+    </div>
+  </div>
+  <form action="{{ url_for('search.search_results') }}" method="GET" class="search-form">
+    <input type="text" name="q" placeholder="Search products..." required>
+    <button type="submit">Search</button>
+  </form>
+
   <ul>
     {% if g.user %}
       <li><span>{{ g.user['username'] }}</span>
