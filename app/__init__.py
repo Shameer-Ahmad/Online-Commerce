@@ -1,6 +1,6 @@
 import os
-
-from flask import Flask
+import secrets
+from flask import Flask, session
 
 
 def create_app(test_config=None):
@@ -32,5 +32,10 @@ def create_app(test_config=None):
     app.register_blueprint(cart.bp)
     app.register_blueprint(categories.bp)
     app.register_blueprint(search.bp)
+
+    @app.before_request
+    def create_session():
+        if "shopper_id" not in session:
+            session["shopper_id"] = secrets.token_hex(16)  # Generates a unique random shopper ID
     
     return app 

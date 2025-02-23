@@ -12,7 +12,7 @@
     <div class="table-container">
         <!-- Products Table -->
         <div>
-            <h3>Order</h3>
+            <h3>Orders</h3>
             <table>
                 <tr>
                     {% for column in products[0].keys() %}
@@ -31,7 +31,7 @@
 
         <!-- Categories Table -->
 <div>
-    <h3>Employee</h3>
+    <h3>Employees</h3>
     <table>
         <tr>
             {% for column in categories[0].keys() %}
@@ -40,12 +40,12 @@
         </tr>
         {% for category in categories %}
         <tr>
-            {% for value in category %}
+            {% for key in category.keys() %}
                 <td>
-                    {% if loop.index == 4 %} <!-- If it's the Picture column -->
-                        {{"Can't diplay image"}}
+                    {% if key == 'Photo' %} <!-- If it's the Photo column -->
+                        {{"Can't display image"}}
                     {% else %}
-                        {{ value }}
+                        {{ category[key] }}
                     {% endif %}
                 </td>
             {% endfor %}
