@@ -18,7 +18,13 @@
       <tbody>
         {% for product in results %}
         <tr>
-          <td>{{ product['ProductName'] }}</td>
+          <td>
+            <form action="{{ url_for('cart.add_to_cart', product_id=product.ProductID) }}" method="POST">
+              <button type="submit">
+                  {{ product.ProductName }}
+              </button>
+            </form>
+          </td>
           <td>${{ product['UnitPrice'] }}</td>
           <td>{{ product['CategoryName'] }}</td>
           <td>
