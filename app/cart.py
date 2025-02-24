@@ -26,13 +26,16 @@ def check_id():
         session["shopper_id"] = secrets.token_hex(16)
     return session["shopper_id"]
 
-def add_to_cart(product_id, quantity):
+@bp.route("/add_to_cart/<int:product_id>", methods=["POST"])
+def add_to_cart(product_id):
     db = get_db()
     shopper_id = check_id()
+    quantity = int(request.form.get("quantity", 1))
     db.execute("insert into cart (shopper_id, product_id, quantity) values (?,?,?)", 
                (shopper_id, product_id, quantity),)
     db.commit()
-
+    return redirect(url_for("cart.view_cart"))
+    
 def calculate_total():
     items=get_items()
     return sum([item['price'] * item['quantity'] for item in items])
