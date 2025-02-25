@@ -1,7 +1,7 @@
 import os
 
 from flask import Flask
-
+from app.db import init_db
 
 def create_app(test_config=None):
     # create and configure the app
@@ -23,8 +23,12 @@ def create_app(test_config=None):
         os.makedirs(app.instance_path)
     except OSError:
         pass
+
     from . import db
     db.init_app(app)
+
+    with app.app_context():
+        init_db()
     
     from . import auth, landing, cart, categories, search 
     app.register_blueprint(auth.bp)
