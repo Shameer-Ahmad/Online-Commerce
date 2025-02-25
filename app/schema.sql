@@ -17,9 +17,10 @@ CREATE TABLE cart (
   product_id INTEGER NOT NULL,
   quantity INTEGER NOT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (product_id) REFERENCES products(id)
+  FOREIGN KEY (product_id) REFERENCES Products(ProductID)
 );
 
+-- do we use this table?
 CREATE TABLE order_items (
   id INTEGER PRIMARY KEY AUTOINCREMENT, 
   order_id INTEGER NOT NULL,
@@ -28,6 +29,5 @@ CREATE TABLE order_items (
   quantity INTEGER NOT NULL,
   price DECIMAL(10,2) NOT NULL,
   order_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (user_id) REFERENCES user(id),
-  FOREIGN KEY (product_id) REFERENCES Products(ProductID)
+  FOREIGN KEY (user_id) REFERENCES user(id)
 );
