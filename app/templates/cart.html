@@ -21,10 +21,10 @@
 
         {%for item in cart%}
         <tr>
-            <td>{{item.name}}</td>
-            <td>{{item.price}}</td>
-            <td>{{item.quantity}}</td> <!--Quantity of item-->
-            <td>${{ item.price * item.quantity}}</td> <!--Total price of item-->
+            <td>{{ item.name }}</td>
+            <td>${{ "%.2f"|format(item.price) }}</td> <!--Price of item-->
+            <td>{{ item.quantity }}</td> <!--Quantity of item-->
+            <td>${{ "%.2f"|format(item.price * item.quantity) }}</td> <!--Total price of item-->
             <td>
                 <form action="{{ url_for('cart.remove_one', item_id=item.id) }}" method="POST" style="display: inline;"> 
                     <button type="submit">-</button>
@@ -39,7 +39,7 @@
 
         <tr>
             <td colspan="3">Overall Total</td>
-            <td>${{total}}</td> <!-- Total price of all items in cart -->
+            <td>${{ "%.2f"|format(total) }}</td> <!-- Total price of all items in cart -->
             <td>
                 <form action="{{url_for('cart.clean')}}" method="POST"> <!-- This calls url /cart/clean -->
                     <button type="submit">Clear Cart</button>
@@ -52,7 +52,7 @@
         <tr>
             <td colspan="3"></td>
             <td>
-                <form action="{{url_for('cart.checkout')}}" method="POST"> <!-- This calls url /cart/checkout -->
+                <form action="{{ url_for('cart.checkout') }}" method="POST"> <!-- This calls url /cart/checkout -->
                     <button type="submit">Checkout</button>
                 </form>
             </td>

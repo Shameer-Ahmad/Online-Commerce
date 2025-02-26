@@ -24,7 +24,7 @@
                   {{ product.ProductName }}
               </button>
           </form>
-          <td>${{ product['UnitPrice'] }}</td>
+          <td>${{ "%.2f"|format(product['UnitPrice']) }}</td>
           <td>{{ product['UnitsInStock'] }}</td>
           <td>
             {% if product['Discontinued'] %}
