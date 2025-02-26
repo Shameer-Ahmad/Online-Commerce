@@ -2,7 +2,7 @@
 -- Drop any existing data and create empty tables.
 
 DROP TABLE IF EXISTS user;
-DROP TABLE IF EXISTS cart;
+DROP TABLE IF EXISTS Shopping_Cart;
 DROP TABLE IF EXISTS order_items;
 
 CREATE TABLE user (
@@ -11,7 +11,7 @@ CREATE TABLE user (
   password TEXT NOT NULL
 );
 
-CREATE TABLE cart (
+CREATE TABLE Shopping_Cart (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   shopper_id TEXT NOT NULL,
   product_id INTEGER NOT NULL,

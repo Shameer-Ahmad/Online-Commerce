@@ -20,13 +20,13 @@ def add_to_cart(product_id):
     db = get_db()
     shopper_id = check_id()
 
-    item = db.execute("SELECT quantity FROM cart WHERE product_id = ? AND shopper_id = ?", (product_id, shopper_id)).fetchone()
+    item = db.execute("SELECT quantity FROM Shopping_Cart WHERE product_id = ? AND shopper_id = ?", (product_id, shopper_id)).fetchone()
 
     if item:
-        db.execute("UPDATE cart SET quantity = quantity + 1 WHERE product_id = ? AND shopper_id = ?", (product_id, shopper_id))
+        db.execute("UPDATE Shopping_Cart SET quantity = quantity + 1 WHERE product_id = ? AND shopper_id = ?", (product_id, shopper_id))
     else:
         quantity = int(request.form.get("quantity", 1))
-        db.execute('INSERT INTO cart (shopper_id, product_id, quantity) VALUES (?, ?, ?)', (shopper_id, product_id, quantity),)
+        db.execute('INSERT INTO Shopping_Cart (shopper_id, product_id, quantity) VALUES (?, ?, ?)', (shopper_id, product_id, quantity))
 
     db.commit()
     return redirect(url_for("cart.view_cart"))
@@ -38,10 +38,10 @@ def calculate_total():
 def get_items():
     db = get_db()
     shopper_id = check_id()
-    cursor = db.execute("""SELECT cart.id, cart.quantity, Products.ProductName, Products.UnitPrice 
-                        FROM cart 
-                        JOIN Products ON cart.product_id = Products.ProductID 
-                        WHERE cart.shopper_id = ?
+    cursor = db.execute("""SELECT Shopping_Cart.id, Shopping_Cart.quantity, Products.ProductName, Products.UnitPrice 
+                        FROM Shopping_Cart 
+                        JOIN Products ON Shopping_Cart.product_id = Products.ProductID 
+                        WHERE Shopping_Cart.shopper_id = ?
                         """, (shopper_id,))
     items = cursor.fetchall()
     return [{'id': row[0], 'quantity': row[1], 'name': row[2], 'price': row[3]} for row in items]
@@ -55,12 +55,12 @@ def remove_one(item_id):
     db = get_db()
     shopper_id = check_id()
 
-    item = db.execute("SELECT quantity FROM cart WHERE id = ? AND shopper_id = ?", (item_id, shopper_id)).fetchone()
+    item = db.execute("SELECT quantity FROM Shopping_Cart WHERE id = ? AND shopper_id = ?", (item_id, shopper_id)).fetchone()
 
     if item and item['quantity'] > 1:
-        db.execute("UPDATE cart SET quantity = quantity - 1 WHERE id = ? AND shopper_id = ?", (item_id, shopper_id))
+        db.execute("UPDATE Shopping_Cart SET quantity = quantity - 1 WHERE id = ? AND shopper_id = ?", (item_id, shopper_id))
     else:
-        db.execute("DELETE FROM cart WHERE id = ? AND shopper_id = ?", (item_id, shopper_id))
+        db.execute("DELETE FROM Shopping_Cart WHERE id = ? AND shopper_id = ?", (item_id, shopper_id))
 
     db.commit()
     return redirect(url_for("cart.view_cart"))
@@ -70,15 +70,25 @@ def add_one(item_id):
     db = get_db()
     shopper_id = check_id()
 
-    item = db.execute("SELECT quantity FROM cart WHERE id = ? AND shopper_id = ?", (item_id, shopper_id)).fetchone()
+    item = db.execute("SELECT quantity FROM Shopping_Cart WHERE id = ? AND shopper_id = ?", (item_id, shopper_id)).fetchone()
 
     if item:
-        db.execute("UPDATE cart SET quantity = quantity + 1 WHERE id = ? AND shopper_id = ?", (item_id, shopper_id))
+        db.execute("UPDATE Shopping_Cart SET quantity = quantity + 1 WHERE id = ? AND shopper_id = ?", (item_id, shopper_id))
 
     db.commit()
     return redirect(url_for("cart.view_cart"))
 
-@bp.route('/clean')
+@bp.route("/clear", methods=["POST"])
+def clear():
+    db = get_db()
+    shopper_id = check_id()
+
+    db.execute("DELETE FROM Shopping_Cart WHERE shopper_id = ?", (shopper_id,))
+
+    db.commit()
+    return redirect(url_for("cart.view_cart"))
+
+@bp.route("/clean")
 def clean():
     db = get_db()
     shopper_id = check_id()
@@ -86,13 +96,13 @@ def clean():
     one_month_ago = datetime.now() - timedelta(days=30)
 
     # Check intentions of this line with assignment
-    db.execute("DELETE FROM cart WHERE created_at < ?", (shopper_id, one_month_ago))
+    db.execute("DELETE FROM Shopping_Cart WHERE created_at < ?", (shopper_id, one_month_ago))
     #db.execute("DELETE FROM cart WHERE shopper_id = ? AND created_at < ?", (shopper_id, one_month_ago))
 
     db.commit()
     return redirect(url_for("cart.view_cart"))
 
-@bp.route('/checkout', methods=['POST'])
+@bp.route("/checkout", methods=["POST"])
 def checkout():
     db = get_db()
 
@@ -100,7 +110,7 @@ def checkout():
         return redirect(url_for('auth.login'))
 
     shopper_id = check_id()
-    items = db.execute("SELECT cart.product_id, cart.quantity, products.price FROM cart WHERE shopper_id = ?", (shopper_id,)).fetchall()
+    items = db.execute("SELECT Shopping_Cart.product_id, Shopping_Cart.quantity, products.price FROM Shopping_Cart WHERE shopper_id = ?", (shopper_id,)).fetchall()
 
     # Get total cost of items
     cost = calculate_total()
@@ -113,18 +123,10 @@ def checkout():
     for item in items:
         db.execute("INSERT INTO order_items (order_id, product_id, quantity, price) VALUES (?, ?, ?, ?)", (order_id, item['product_id'], item['quantity'], item['price'] ))
     
-    # Delete that user's old items from the cart
-    db.execute("DELETE FROM cart WHERE shopper_id = ?", (shopper_id,))
-    
+    clear()
     db.commit()
 
     # Delete anything from the entire cart where the product has been there for over a month
     clean()
 
-
-@bp.route("/add_test_items")
-def add_test_items():
-    add_to_cart("1", 2)
-    add_to_cart("3", 3)
-    return redirect(url_for("cart.view_cart"))
 
