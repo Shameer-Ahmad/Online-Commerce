@@ -10,17 +10,6 @@ bp = Blueprint("cart", __name__, url_prefix="/cart")
 def view_cart():
     return render_template("cart.html", cart=get_items(), total=calculate_total())
 
-"""   
-def get_db():
-    import sqlite3
-    if 'db' not in g:
-        g.db = sqlite3.connect(':memory:')
-        g.db.execute('CREATE TABLE cart (id INTEGER PRIMARY KEY, shopper_id TEXT, product_id TEXT, quantity INTEGER)')
-        g.db.execute('CREATE TABLE products (id TEXT PRIMARY KEY, name TEXT, price REAL)')
-        g.db.execute('INSERT INTO products (id, name, price) VALUES ("1", "Product 1", 10.0)')
-        g.db.execute('INSERT INTO products (id, name, price) VALUES ("3", "Product 3", 30.0)')
-    return g.db
-"""
 def check_id():
     if "shopper_id" not in session:
         session["shopper_id"] = secrets.token_hex(16)
@@ -30,9 +19,15 @@ def check_id():
 def add_to_cart(product_id):
     db = get_db()
     shopper_id = check_id()
-    quantity = int(request.form.get("quantity", 1))
-    db.execute("insert into cart (shopper_id, product_id, quantity) values (?,?,?)", 
-               (shopper_id, product_id, quantity),)
+
+    item = db.execute("SELECT quantity FROM cart WHERE product_id = ? AND shopper_id = ?", (product_id, shopper_id)).fetchone()
+
+    if item:
+        db.execute("UPDATE cart SET quantity = quantity + 1 WHERE product_id = ? AND shopper_id = ?", (product_id, shopper_id))
+    else:
+        quantity = int(request.form.get("quantity", 1))
+        db.execute('INSERT INTO cart (shopper_id, product_id, quantity) VALUES (?, ?, ?)', (shopper_id, product_id, quantity),)
+
     db.commit()
     return redirect(url_for("cart.view_cart"))
     
