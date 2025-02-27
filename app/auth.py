@@ -99,7 +99,8 @@ def load_logged_in_user():
 @bp.route('/logout')
 def logout():
     session.clear()
-    return redirect(url_for('index'))
+    # Changed from 'index' to 'landing.landing_page' since 'index' doesn't exist
+    return redirect(url_for('landing.landing_page'))
 
 def login_required(view):
     @functools.wraps(view)
