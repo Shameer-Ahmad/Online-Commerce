@@ -14,43 +14,66 @@ bp = Blueprint('auth', __name__, url_prefix='/auth')
 @bp.route('/register', methods=('GET', 'POST'))
 def register():
     if request.method == 'POST':
-        db = get_db()
-        user_id = request.form['username'].upper()  # Convert to uppercase for case-insensitive lookup
+
+        username = request.form['username']
         password = request.form['password']
+        db = get_db()
+        error = None
 
-        # Check if user already exists
-        existing_user = db.execute("SELECT userID FROM Authentication WHERE userID = ?", (user_id,)).fetchone()
-        if existing_user:
-            return "User ID already exists. Please choose another.", 400
+        if not username:
+            error = 'Username is required.'
+        elif not password:
+            error = 'Password is required.'
 
-        # Hash the password for security
-        hashed_password = generate_password_hash(password)
+        if error is None:
+            try:
+                db.execute(
+                    "INSERT INTO user (username, password) VALUES (?, ?)",
+                    (username, generate_password_hash(password)),
+                )
+                db.commit()
+            except db.IntegrityError:
+                error = f"User {username} is already registered."
+            else:
+                return redirect(url_for("auth.login"))
 
-        # Insert new user into Authentication table
-        db.execute("INSERT INTO Authentication (userID, hashed_password) VALUES (?, ?)", (user_id, hashed_password))
-        db.commit()
-        return "Sucessfully registered!"
+        flash(error)
 
     return render_template('auth/register.html')
 
 @bp.route('/login', methods=('GET', 'POST'))
 def login():
     if request.method == 'POST':
-        user_id = request.form['username'].upper()
+        username = request.form['username']
         password = request.form['password']
         db = get_db()
 
-        session_id = str(uuid.uuid4())  # Generate a new session 
+        error = None
+        user = db.execute(
+            'SELECT * FROM user WHERE username = ?', (username,)
+        ).fetchone()
 
-        db.execute("UPDATE Authentication SET sessionID = ? WHERE userID = ?", (session_id, user_id))
-        db.commit()
+        if user is None:
+            error = 'Incorrect username.'
+        elif not check_password_hash(user['password'], password):
+            error = 'Incorrect password.'
+
+        if error is None:
+            session.clear()
+            session['user_id'] = user['id']
+            return redirect(url_for('landing.landing_page'))
+
+        flash(error)
 
         # Update Flask session
-        session["user_id"] = user_id  # Store user ID in session
-        session["shopper_id"] = user_id  # Replace guest session ID with real user ID
+        old_shopper_id = session.get("shopper_id")
+        session["user_id"] = username  # Store user ID in session
+        session["shopper_id"] = username
 
-        
-        return redirect(url_for('landing.landing_page'))
+        db.execute("""
+                   UPDATE Shopping_Cart SET shopper_id = ? WHERE shopper_id = ?
+                   """, (username, old_shopper_id))
+        db.commit()
         
     return render_template('auth/login.html') 
 
@@ -69,7 +92,7 @@ def database():
 
     return render_template('auth/database.html', products=products, categories=categories)
 
-""" @bp.before_app_request
+@bp.before_app_request
 def load_logged_in_user():
     user_id = session.get('user_id')
 
@@ -78,14 +101,14 @@ def load_logged_in_user():
     else:
         g.user = get_db().execute(
             'SELECT * FROM user WHERE id = ?', (user_id,)
-        ).fetchone() """
+        ).fetchone()
 
 @bp.route('/logout')
 def logout():
     session.clear()
-    return redirect(url_for('index'))
+    return redirect(url_for('landing.landing_page'))
 
-""" def login_required(view):
+def login_required(view):
     @functools.wraps(view)
     def wrapped_view(**kwargs):
         if g.user is None:
@@ -93,4 +116,4 @@ def logout():
 
         return view(**kwargs)
 
-    return wrapped_view """
+    return wrapped_view
