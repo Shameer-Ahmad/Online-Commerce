@@ -17,7 +17,7 @@ CREATE TABLE Shopping_Cart (
   product_id INTEGER NOT NULL,
   quantity INTEGER NOT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (product_id) REFERENCES Products(ProductID)
+  FOREIGN KEY (product_id) REFERENCES Products (ProductID)
 );
 
 -- do we use this table?
@@ -29,12 +29,11 @@ CREATE TABLE order_items (
   quantity INTEGER NOT NULL,
   price DECIMAL(10,2) NOT NULL,
   order_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (user_id) REFERENCES user(id),
-  FOREIGN KEY (product_id) REFERENCES products(id)
-)
+  FOREIGN KEY (user_id) REFERENCES user (id)
+);
 
 CREATE TABLE Authentication(
   userID TEXT PRIMARY KEY,
   hashed_password TEXT NOT NULL,
   sessionID TEXT
-)
+);
