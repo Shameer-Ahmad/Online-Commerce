@@ -3,6 +3,7 @@ from flask import Blueprint, session, request, g, render_template, redirect, url
 from datetime import datetime, timedelta
 
 from app.db import get_db, init_db
+from app.auth import login_required
 
 bp = Blueprint("cart", __name__, url_prefix="/cart")
 
@@ -103,6 +104,7 @@ def clean():
     return redirect(url_for("cart.view_cart"))
 
 @bp.route("/checkout", methods=["POST"])
+@login_required
 def checkout():
     db = get_db()
 
@@ -112,7 +114,6 @@ def checkout():
     shopper_id = check_id()
     items = db.execute("SELECT Shopping_Cart.product_id, Shopping_Cart.quantity, products.price FROM Shopping_Cart WHERE shopper_id = ?", (shopper_id,)).fetchall()
 
-    # Get total cost of items
     cost = calculate_total()
     
     # Grabs the newest id label to make this new order have that id label
