@@ -5,7 +5,6 @@ DROP TABLE IF EXISTS user;
 -- DROP TABLE IF EXISTS post;
 -- DROP TABLE IF EXISTS products;
 DROP TABLE IF EXISTS cart;
-DROP TABLE IF EXISTS order_items;
 
 CREATE TABLE user (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -49,4 +48,10 @@ CREATE TABLE order_items (
   order_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (user_id) REFERENCES user(id),
   FOREIGN KEY (product_id) REFERENCES products(id)
-);
+)
+
+CREATE TABLE Authentication(
+  userID TEXT PRIMARY KEY,
+  hashed_password TEXT NOT NULL,
+  sessionID TEXT
+)
