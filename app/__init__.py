@@ -1,6 +1,8 @@
 import os
-import secrets
 from flask import Flask, session
+from app.db import init_db
+import secrets
+
 
 
 def create_app(test_config=None):
@@ -23,8 +25,12 @@ def create_app(test_config=None):
         os.makedirs(app.instance_path)
     except OSError:
         pass
+
     from . import db
     db.init_app(app)
+
+    with app.app_context():
+        init_db()
     
     from . import auth, landing, cart, categories, search 
     app.register_blueprint(auth.bp)
