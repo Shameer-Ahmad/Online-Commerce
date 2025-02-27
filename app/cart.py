@@ -3,7 +3,7 @@ from flask import Blueprint, session, request, g, render_template, redirect, url
 from datetime import datetime, timedelta
 
 from app.db import get_db, init_db
-from app.auth import login_required
+# from app.auth import login_required
 
 bp = Blueprint("cart", __name__, url_prefix="/cart")
 
@@ -104,7 +104,7 @@ def clean():
     return redirect(url_for("cart.view_cart"))
 
 @bp.route("/checkout", methods=["POST"])
-@login_required
+#@login_required
 def checkout():
     db = get_db()
 
