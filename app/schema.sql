@@ -31,7 +31,6 @@ CREATE TABLE order_items (
   price DECIMAL(10,2) NOT NULL,
   order_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (product_id) REFERENCES Products (ProductID),
-  FOREIGN KEY (price) REFERENCES Products (UnitPrice),
   FOREIGN KEY (user_id) REFERENCES user (id)
 );
 

@@ -21,13 +21,20 @@ def add_to_cart(product_id):
     db = get_db()
     shopper_id = check_id()
 
+    stock = db.execute("SELECT UnitsInStock FROM Products WHERE ProductID = ?", (product_id,)).fetchone()
+    if not stock:
+        return redirect(url_for("cart.view_cart"))  # Product not found
+
+    stock_limit = stock["UnitsInStock"]
+
     item = db.execute("SELECT quantity FROM Shopping_Cart WHERE product_id = ? AND shopper_id = ?", (product_id, shopper_id)).fetchone()
 
     if item:
-        db.execute("UPDATE Shopping_Cart SET quantity = quantity + 1 WHERE product_id = ? AND shopper_id = ?", (product_id, shopper_id))
+            if item["quantity"] < stock_limit:  # Ensure quantity does not exceed stock
+                db.execute("UPDATE Shopping_Cart SET quantity = quantity + 1 WHERE product_id = ? AND shopper_id = ?", (product_id, shopper_id))
     else:
-        quantity = int(request.form.get("quantity", 1))
-        db.execute('INSERT INTO Shopping_Cart (shopper_id, product_id, quantity) VALUES (?, ?, ?)', (shopper_id, product_id, quantity))
+        quantity = min(int(request.form.get("quantity", 1)), stock_limit)  # Prevent adding more than stock
+        db.execute("INSERT INTO Shopping_Cart (shopper_id, product_id, quantity) VALUES (?, ?, ?)", (shopper_id, product_id, quantity))
 
     db.commit()
     return redirect(url_for("cart.view_cart"))
@@ -73,11 +80,18 @@ def add_one(item_id):
     db = get_db()
     shopper_id = check_id()
 
-    item = db.execute("SELECT quantity FROM Shopping_Cart WHERE id = ? AND shopper_id = ?", (item_id, shopper_id)).fetchone()
+    item = db.execute("SELECT product_id, quantity FROM Shopping_Cart WHERE id = ? AND shopper_id = ?", (item_id, shopper_id)).fetchone()
+    product_id = item["product_id"]
 
-    if item:
+    stock = db.execute("SELECT UnitsInStock FROM Products WHERE ProductID = ?", (product_id,)).fetchone()
+    if not stock:
+        return redirect(url_for("cart.view_cart"))  # Product not found
+
+    stock_limit = stock["UnitsInStock"]
+        
+    if item["quantity"] < stock_limit:
         db.execute("UPDATE Shopping_Cart SET quantity = quantity + 1 WHERE id = ? AND shopper_id = ?", (item_id, shopper_id))
-
+        
     db.commit()
     return redirect(url_for("cart.view_cart"))
 
