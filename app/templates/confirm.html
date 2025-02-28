@@ -3,4 +3,21 @@
     <head>
         <title>Thank you for your order!</title>
     </head>
+    <p>Address: {{ session['ship_address'] }}</p>
+    <p>City: {{ session['ship_city'] }}</p>
+    <p>Postal Code: {{ session['ship_postal_code'] }}</p>
+    <p>Country: {{ session['ship_country'] }}</p>
+
+    <h3>Items:</h3>
+    <ul>
+        {% for item in items %}
+        <li>{{ item.name }} - Quantity: {{ item.quantity }} - Price: ${{ item.price }}</li>
+        {% endfor %}
+    </ul>
+
+    <h3>Total: ${{ total }}</h3>
+
+    <form action="{{ url_for('cart.confirm') }}" method="POST">
+        <button type="submit">Place Order</button>
+    </form>
 </html>
