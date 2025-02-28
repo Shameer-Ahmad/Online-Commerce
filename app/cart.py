@@ -39,12 +39,14 @@ def calculate_total():
 def get_items():
     db = get_db()
     shopper_id = check_id()
-    cursor = db.execute("""SELECT Shopping_Cart.id, Shopping_Cart.quantity, Products.ProductName, Products.UnitPrice 
+    cursor = db.execute("""SELECT Shopping_Cart.id, Shopping_Cart.quantity, Products.ProductName, Products.UnitPrice as price
                         FROM Shopping_Cart 
                         JOIN Products ON Shopping_Cart.product_id = Products.ProductID 
                         WHERE Shopping_Cart.shopper_id = ?
                         """, (shopper_id,))
     items = cursor.fetchall()
+
+    print("Items at Checkout:", [dict(row) for row in items])
     return [{'id': row[0], 'quantity': row[1], 'name': row[2], 'price': row[3]} for row in items]
 
 @bp.route("/continue_shopping", methods=["POST"])
