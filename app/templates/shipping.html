@@ -8,9 +8,13 @@
         <label for="shipper"> Choose a Shipper: </label>
         <select name="shipper" id="shipper" required>
             {% for shipper in shippers %}
-                <option value="{{ shipper['ShipperID'] }}">{{ shipper['CompanyName'] }}</option>
+                <option value="{{ shipper['ShipperID'] }}" 
+                    {% if session['selected_shipper'] == shipper['ShipperID']|string %}selected{% endif %}>
+                    {{ shipper['CompanyName'] }}
+                </option>
             {% endfor %}
         </select>
+        <br><br>
+        <button type="submit">Confirm Shipping</button>
     </form>
-    <a href="{{ url_for('cart.confirm') }}">Confirm</a>
 {% endblock %}

@@ -145,20 +145,38 @@ def shipping():
     db = get_db()
 
     shippers = db.execute("SELECT ShipperID, CompanyName from Shippers").fetchall()
+
     if request.method == "POST":
         selected_shipper = request.form.get("shipper")
         session['selected_shipper'] = selected_shipper
         
-        
         return redirect (url_for("cart.confirm"))
-
 
     return render_template("shipping.html", shippers=shippers)
 
 @bp.route("/confirm")
 def confirm():
-    selected_shipper = session.get('selected_shipper')
-    items = get_items()
-    total = calculate_total()
+    db = get_db()
 
-    return render_template("confirm.html", items=items, total=total, shipper=selected_shipper)
+    selected_shipper = session.get('selected_shipper')
+    if selected_shipper:
+        shipper = db.execute("SELECT CompanyName FROM Shippers WHERE ShipperID = ?", (selected_shipper,)).fetchone()
+        if shipper:
+            shipper_name = shipper["CompanyName"]
+    
+    order = db.execute("""SELECT Orders.OrderID, Orders.CustomerID, Orders.OrderDate, Orders.ShipAddress, Orders.ShipCity,
+                       Orders.ShipPostalCode, Orders.ShipCountry
+                       FROM Orders WHERE CustomerID = ? ORDER BY OrderDate DESC LIMIT 1;
+                    """, (session['user_id'],)).fetchone()
+
+    if not order:
+        return redirect(url_for("cart.view_cart"))
+
+    items = db.execute("""SELECT Products.ProductName AS Name, order_items.quantity AS Quantity, order_items.price AS Price
+                        FROM order_items JOIN Products ON order_items.product_id = Products.ProductID
+                        WHERE order_items.order_id = ?;
+                    """, (order['OrderID'],)).fetchall()
+    
+    total = sum(item['quantity'] * item['price'] for item in items)
+
+    return render_template("confirm.html", items=items, total=total, shipper_name=shipper_name)
