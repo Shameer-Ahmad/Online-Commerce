@@ -32,7 +32,7 @@ def create_app(test_config=None):
     with app.app_context():
         init_db()
     
-    from . import auth, landing, cart, categories, search 
+    from . import auth, landing, cart, categories, search
     app.register_blueprint(auth.bp)
     app.register_blueprint(landing.bp)
     app.register_blueprint(cart.bp)

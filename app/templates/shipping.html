@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Choose Shipping Option</title>
+</html>
+
+<body>
+    <h1> Select your preferred shipping method </h1>
+    <form method = "POST" action="{{ url_for('cart.shipping') }}">
+        <label for="shipper"> Choose a Shipper: </label>
+        <select name="shipper" id="shipper" required>
+            {% for shipper in shippers %}
+                <option value="{{ shipper['ShipperID'] }}">{{ shipper['CompanyName'] }}</option>
+            {% endfor %}
+        </select>
+    </form>
+    <a href="{{ url_for('cart.view_cart') }}">Cancel</a>
+</body>
+</html>

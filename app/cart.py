@@ -1,5 +1,5 @@
 import secrets
-from flask import Blueprint, session, request, g, render_template, redirect, url_for
+from flask import Blueprint, session, request, g, render_template, redirect, url_for, redirect
 from datetime import datetime, timedelta
 
 from app.db import get_db, init_db
@@ -130,4 +130,16 @@ def checkout():
     # Delete anything from the entire cart where the product has been there for over a month
     clean()
 
+@bp.route("/shipping", methods=["GET", "POST"])
+def shipping():
+    db = get_db()
 
+    # want to get shoppers to choose one of three shipping options then 
+    shippers = db.execute("SELECT ShipperID, CompanyName from Shippers").fetchall()
+    if request.method == "POST":
+        selected_shipper = request.form.get("shipper")
+        session['selected_shipper'] = selected_shipper
+        return redirect (url_for("cart.view_cart"))
+
+
+    return render_template("shipping.html", shippers=shippers)
