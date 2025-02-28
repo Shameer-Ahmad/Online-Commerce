@@ -1,15 +1,15 @@
 -- Initialize the database.
 -- Drop any existing data and create empty tables.
 
-DROP TABLE IF EXISTS user;
 DROP TABLE IF EXISTS Shopping_Cart;
 DROP TABLE IF EXISTS order_items;
 DROP TABLE IF EXISTS Authentication;
 
-CREATE TABLE user (
+CREATE TABLE IF NOT EXISTS user (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   username TEXT UNIQUE NOT NULL,
-  password TEXT NOT NULL
+  password TEXT NOT NULL,
+  sessionID TEXT
 );
 
 CREATE TABLE Shopping_Cart (
@@ -21,7 +21,6 @@ CREATE TABLE Shopping_Cart (
   FOREIGN KEY (product_id) REFERENCES Products (ProductID)
 );
 
--- do we use this table?
 CREATE TABLE order_items (
   id INTEGER PRIMARY KEY AUTOINCREMENT, 
   order_id INTEGER NOT NULL,
