@@ -11,7 +11,7 @@ def search_results():
     results = []
     if query:
         cursor = db.execute(
-            "SELECT ProductID, ProductName, UnitPrice, CategoryName FROM 'Alphabetical list of products' "
+            "SELECT ProductID, ProductName, UnitPrice, UnitsInStock, CategoryName FROM 'Alphabetical list of products' "
             "WHERE ProductName LIKE ? OR CategoryName LIKE ?",
             (f"%{query}%", f"%{query}%")
         )

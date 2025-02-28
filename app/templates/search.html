@@ -11,6 +11,7 @@
         <tr>
           <th>Product Name</th>
           <th>Price</th>
+          <th>Stock</th>
           <th>Category</th>
           <th>Status</th>
         </tr>
@@ -25,9 +26,10 @@
               </button>
             </form>
           </td>
-          <td>${{ "%.2f"|format(product['UnitPrice']) }}</td>
-          <td>{{ product['CategoryName'] }}</td>
-          <td>
+          <td style="width: 15%; text-align: right; padding-right: 15px;">${{ "%.2f"|format(product['UnitPrice']) }}</td>
+          <td style="width: 15%; text-align: right; padding-right: 40px;">{{ product['UnitsInStock'] }}</td>
+          <td style="width: 15%; text-align: right; padding-right: 20px;">{{ product['CategoryName'] }}</td>
+          <td style="width: 15%; text-align: right; padding-right: 30px;">
             {% if product['Discontinued'] %}
               <span style="color: red;">Discontinued</span>
             {% else %}
