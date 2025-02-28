@@ -97,7 +97,7 @@ def clean():
     one_month_ago = datetime.now() - timedelta(days=30)
 
     # Check intentions of this line with assignment
-    db.execute("DELETE FROM Shopping_Cart WHERE created_at < ?", (shopper_id, one_month_ago))
+    db.execute("DELETE FROM Shopping_Cart WHERE shopper_id = ? AND created_at < ?", (shopper_id, one_month_ago))
     #db.execute("DELETE FROM cart WHERE shopper_id = ? AND created_at < ?", (shopper_id, one_month_ago))
 
     db.commit()
@@ -112,7 +112,7 @@ def checkout():
         return redirect(url_for('auth.login'))
 
     shopper_id = check_id()
-    items = db.execute("SELECT Shopping_Cart.product_id, Shopping_Cart.quantity, products.price FROM Shopping_Cart WHERE shopper_id = ?", (shopper_id,)).fetchall()
+    items = db.execute("SELECT Shopping_Cart.product_id, Shopping_Cart.quantity, Products.UnitPrice FROM Shopping_Cart, Products WHERE shopper_id = ?", (shopper_id,)).fetchall()
 
     cost = calculate_total()
     
@@ -129,6 +129,7 @@ def checkout():
 
     # Delete anything from the entire cart where the product has been there for over a month
     clean()
+    return redirect(url_for("cart.shipping"))
 
 @bp.route("/shipping", methods=["GET", "POST"])
 def shipping():
@@ -139,7 +140,17 @@ def shipping():
     if request.method == "POST":
         selected_shipper = request.form.get("shipper")
         session['selected_shipper'] = selected_shipper
-        return redirect (url_for("cart.view_cart"))
+        
+        
+        return redirect (url_for("cart.confirm"))
 
 
     return render_template("shipping.html", shippers=shippers)
+
+@bp.route("/confirm")
+def confirm():
+    selected_shipper = session.get('selected_shipper')
+    items = get_items()
+    total = calculate_total()
+
+    return render_template("confirm.html", items=items, total=total, shipper=selected_shipper)
