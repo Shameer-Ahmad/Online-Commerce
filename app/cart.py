@@ -3,6 +3,7 @@ from flask import Blueprint, session, request, g, render_template, redirect, url
 from datetime import datetime, timedelta
 
 from app.db import get_db, init_db
+from app.auth import login_required
 
 bp = Blueprint("cart", __name__, url_prefix="/cart")
 
@@ -105,6 +106,7 @@ def clean():
     return redirect(url_for("cart.view_cart"))
 
 @bp.route("/checkout", methods=["POST"])
+@login_required
 def checkout():
     db = get_db()
 
@@ -125,7 +127,6 @@ def checkout():
     db.execute("INSERT INTO Orders (CustomerID, OrderDate) VALUES (?, CURRENT_TIMESTAMP)", (session['user_id'],))
     order_id = db.execute("SELECT last_insert_rowid() AS id").fetchone()['id']
 
-    # Insert every item from the cart associated with this user into the order_items table
     for item in items:
         db.execute("""INSERT INTO order_items (order_id, user_id, shopper_id, product_id, quantity, price) 
                    VALUES (?, ?, ?, ?, ?, ?);
@@ -143,7 +144,6 @@ def checkout():
 def shipping():
     db = get_db()
 
-    # want to get shoppers to choose one of three shipping options then 
     shippers = db.execute("SELECT ShipperID, CompanyName from Shippers").fetchall()
     if request.method == "POST":
         selected_shipper = request.form.get("shipper")
