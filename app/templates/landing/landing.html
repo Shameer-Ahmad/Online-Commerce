@@ -8,4 +8,42 @@
 
 {% block content %}
     <p>Explore products and enjoy a seamless shopping experience.</p>
-{% endblock %}
+      <h2>{{ category_name }}</h2>
+  
+  {% if products %}
+    <table>
+      <thead>
+        <tr>
+          <th>Product Name</th>
+          <th>Price</th>
+          <th>Stock</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for product in products %}
+        <tr>
+          <td>
+            <form action="{{ url_for('cart.add_to_cart', product_id=product.ProductID) }}" method="POST">
+              <button type="submit">
+                  {{ product.ProductName }}
+              </button>
+            </form>
+          </td>
+          <td>${{ "%.2f"|format(product['UnitPrice']) }}</td>
+          <td>{{ product['UnitsInStock'] }}</td>
+          <td>
+            {% if product['Discontinued']|int %}
+              <span style="color: red;">Discontinued</span>
+            {% else %}
+              <span style="color: green;">Available</span>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p>No products found in this category.</p>
+  {% endif %}
+    {% endblock %}

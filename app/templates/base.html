@@ -7,6 +7,7 @@
     <div class="dropdown">
       <button class="dropbtn">Categories ▼</button>
           <div class="dropdown-content">
+            <a href="{{ url_for('landing.landing_page') }}">All Products</a>
             <a href="{{ url_for('categories.category_items', category_id=1, category_name='Beverages') }}">Beverages</a>
             <a href="{{ url_for('categories.category_items', category_id=2, category_name='Condiments') }}">Condiments</a>
             <a href="{{ url_for('categories.category_items', category_id=3, category_name='Confections') }}">Confections</a>

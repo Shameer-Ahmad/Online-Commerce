@@ -3,6 +3,19 @@ from app.db import get_db
 
 bp = Blueprint("categories", __name__, url_prefix="/categories")
 
+@bp.route("/")
+def all_products():
+    """Display all products if no category is selected."""
+    db = get_db()
+    cursor = db.execute(
+        "SELECT ProductID, ProductName, UnitPrice, UnitsInStock, Discontinued "
+        "FROM 'Alphabetical list of products'"
+    )
+    products = [dict(row) for row in cursor.fetchall()]
+    db.close()
+
+    return render_template("landing/landing.html", category_name="All Products", products=products)
+
 @bp.route("/<int:category_id>/")
 def category_items(category_id, category_name=None):
     """Show products in a selected category using CategoryID, but fetch CategoryName if missing."""
