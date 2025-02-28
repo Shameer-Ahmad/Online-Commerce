@@ -23,17 +23,17 @@ def add_to_cart(product_id):
 
     stock = db.execute("SELECT UnitsInStock FROM Products WHERE ProductID = ?", (product_id,)).fetchone()
     if not stock:
-        return redirect(url_for("cart.view_cart"))  # Product not found
+        return redirect(url_for("cart.view_cart"))
 
     stock_limit = stock["UnitsInStock"]
 
     item = db.execute("SELECT quantity FROM Shopping_Cart WHERE product_id = ? AND shopper_id = ?", (product_id, shopper_id)).fetchone()
 
     if item:
-            if item["quantity"] < stock_limit:  # Ensure quantity does not exceed stock
+            if item["quantity"] < stock_limit:
                 db.execute("UPDATE Shopping_Cart SET quantity = quantity + 1 WHERE product_id = ? AND shopper_id = ?", (product_id, shopper_id))
     else:
-        quantity = min(int(request.form.get("quantity", 1)), stock_limit)  # Prevent adding more than stock
+        quantity = min(int(request.form.get("quantity", 1)), stock_limit)
         db.execute("INSERT INTO Shopping_Cart (shopper_id, product_id, quantity) VALUES (?, ?, ?)", (shopper_id, product_id, quantity))
 
     db.commit()
@@ -85,7 +85,7 @@ def add_one(item_id):
 
     stock = db.execute("SELECT UnitsInStock FROM Products WHERE ProductID = ?", (product_id,)).fetchone()
     if not stock:
-        return redirect(url_for("cart.view_cart"))  # Product not found
+        return redirect(url_for("cart.view_cart"))
 
     stock_limit = stock["UnitsInStock"]
         
@@ -112,9 +112,7 @@ def clean():
 
     one_month_ago = datetime.now() - timedelta(days=30)
 
-    # Check intentions of this line with assignment
     db.execute("DELETE FROM Shopping_Cart WHERE shopper_id = ? AND created_at < ?", (shopper_id, one_month_ago))
-    #db.execute("DELETE FROM cart WHERE shopper_id = ? AND created_at < ?", (shopper_id, one_month_ago))
 
     db.commit()
     return redirect(url_for("cart.view_cart"))
@@ -136,9 +134,7 @@ def checkout():
     if not items:
         return redirect(url_for("cart.view_cart"))
 
-    cost = calculate_total()
-
-    db.execute("INSERT INTO Orders (CustomerID, OrderDate) VALUES (?, CURRENT_TIMESTAMP)", (session['user_id'],))
+    db.execute("INSERT INTO Orders (CustomerID, EmployeeID, OrderDate) VALUES (?, (select EmployeeID from Employees where LastName = 'WEB' and FirstName = 'WEB' limit 1), CURRENT_TIMESTAMP)", (session['user_id'],))
     order_id = db.execute("SELECT last_insert_rowid() AS id").fetchone()['id']
 
     for item in items:
