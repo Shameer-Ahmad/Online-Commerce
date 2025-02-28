@@ -59,22 +59,19 @@ def login():
             error = 'Incorrect password.'
 
         if error is None:
+            old_shopper_id = session.get("shopper_id")
             session.clear()
             session['user_id'] = user['id']
-            return redirect(url_for('landing.landing_page'))
+            session["shopper_id"] = username
+            #return redirect(url_for('landing.landing_page'))
 
-        flash(error)
-
-        # Update Flask session
-        old_shopper_id = session.get("shopper_id")
-        session["user_id"] = username  # Store user ID in session
-        session["shopper_id"] = username
-
-        db.execute("""
-                   UPDATE Shopping_Cart SET shopper_id = ? WHERE shopper_id = ?
-                   """, (username, old_shopper_id))
-        db.commit()
+            db.execute("""
+                    UPDATE Shopping_Cart SET shopper_id = ? WHERE shopper_id = ?
+                    """, (username, old_shopper_id))
+            db.commit()
         
+            return redirect(url_for('landing.landing_page'))
+        flash(error)
     return render_template('auth/login.html') 
 
 
