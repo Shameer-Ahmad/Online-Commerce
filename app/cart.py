@@ -97,7 +97,7 @@ def clean():
     one_month_ago = datetime.now() - timedelta(days=30)
 
     # Check intentions of this line with assignment
-    db.execute("DELETE FROM Shopping_Cart WHERE created_at < ?", (shopper_id, one_month_ago))
+    db.execute("DELETE FROM Shopping_Cart WHERE created_at < ?", (one_month_ago,))
     #db.execute("DELETE FROM cart WHERE shopper_id = ? AND created_at < ?", (shopper_id, one_month_ago))
 
     db.commit()
