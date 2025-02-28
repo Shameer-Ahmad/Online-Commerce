@@ -1,10 +1,8 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Choose Shipping Option</title>
-</html>
+{% extends 'base.html' %}
 
-<body>
+{% block title %}Choose Shipping Option - Aviram's Shoppers{% endblock %}
+
+{% block content %}
     <h1> Select your preferred shipping method </h1>
     <form method = "POST" action="{{ url_for('cart.shipping') }}">
         <label for="shipper"> Choose a Shipper: </label>
@@ -15,5 +13,4 @@
         </select>
     </form>
     <a href="{{ url_for('cart.confirm') }}">Confirm</a>
-</body>
-</html>
+{% endblock %}

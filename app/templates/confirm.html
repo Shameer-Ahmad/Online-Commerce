@@ -1,8 +1,8 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <title>Thank you for your order!</title>
-    </head>
+{% extends 'base.html' %}
+
+{% block title %}Thank you for your order!{% endblock %}
+
+{% block content %}
     <p>Address: {{ session['ship_address'] }}</p>
     <p>City: {{ session['ship_city'] }}</p>
     <p>Postal Code: {{ session['ship_postal_code'] }}</p>
@@ -20,4 +20,4 @@
     <form action="{{ url_for('cart.confirm') }}" method="POST">
         <button type="submit">Place Order</button>
     </form>
-</html>
+{% endblock %}

@@ -27,9 +27,12 @@ CREATE TABLE order_items (
   order_id INTEGER NOT NULL,
   user_id INTEGER,
   shopper_id TEXT NOT NULL,
+  product_id INTEGER NOT NULL,
   quantity INTEGER NOT NULL,
   price DECIMAL(10,2) NOT NULL,
   order_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (product_id) REFERENCES Products (ProductID),
+  FOREIGN KEY (price) REFERENCES Products (UnitPrice),
   FOREIGN KEY (user_id) REFERENCES user (id)
 );
 

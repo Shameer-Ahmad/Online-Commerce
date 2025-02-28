@@ -112,23 +112,31 @@ def checkout():
         return redirect(url_for('auth.login'))
 
     shopper_id = check_id()
-    items = db.execute("SELECT Shopping_Cart.product_id, Shopping_Cart.quantity, Products.UnitPrice FROM Shopping_Cart, Products WHERE shopper_id = ?", (shopper_id,)).fetchall()
+    items = db.execute("""SELECT Shopping_Cart.product_id, Shopping_Cart.quantity, Products.UnitPrice AS price
+                       FROM Shopping_Cart JOIN Products ON Shopping_Cart.product_id = Products.ProductID
+                       WHERE Shopping_Cart.shopper_id = ?;
+                       """, (shopper_id,)).fetchall()
+    
+    if not items:
+        return redirect(url_for("cart.view_cart"))
 
     cost = calculate_total()
-    
-    # Grabs the newest id label to make this new order have that id label
+
     db.execute("INSERT INTO Orders (CustomerID, OrderDate) VALUES (?, CURRENT_TIMESTAMP)", (session['user_id'],))
     order_id = db.execute("SELECT last_insert_rowid() AS id").fetchone()['id']
 
     # Insert every item from the cart associated with this user into the order_items table
     for item in items:
-        db.execute("INSERT INTO order_items (order_id, product_id, quantity, price) VALUES (?, ?, ?, ?)", (order_id, item['product_id'], item['quantity'], item['price'] ))
+        db.execute("""INSERT INTO order_items (order_id, user_id, shopper_id, product_id, quantity, price) 
+                   VALUES (?, ?, ?, ?, ?, ?);
+                   """, (order_id, session['user_id'], shopper_id, item['product_id'], item['quantity'], item['price'] ))
+    
+    db.execute("DELETE FROM Shopping_Cart WHERE shopper_id = ?", (shopper_id,))
+    db.commit()
     
     clear()
-    db.commit()
-
-    # Delete anything from the entire cart where the product has been there for over a month
     clean()
+
     return redirect(url_for("cart.shipping"))
 
 @bp.route("/shipping", methods=["GET", "POST"])
