@@ -3,60 +3,50 @@
 {% block title %}Shopping Cart{% endblock %}
 
 {% block content %}
+
 <div class="cart-container">
-    <h2>Shopping Cart</h2> 
+    <h2>Shopping Cart</h2>
 
-    {% if not cart %} <!-- If cart is empty -->
+    {% if not cart %} 
         <p>Your cart is empty.</p>
+    {% else %}
+        <div class="cart-items">
+            {% for item in cart %}
+            <div class="cart-item">
+                <div class="cart-details">
+                    <h3>{{ item.name }}</h3>
+                    <p>Unit Price: ${{ "%.2f"|format(item.price) }}</p>
+                    <p>Total: ${{ "%.2f"|format(item.price * item.quantity) }}</p>
+                </div>
+                <div class="cart-quantity">
+                    <form action="{{ url_for('cart.remove_one', item_id=item.id) }}" method="POST">
+                        <button type="submit">-</button>
+                    </form>
+                    <span>{{ item.quantity }}</span>
+                    <form action="{{ url_for('cart.add_one', item_id=item.id) }}" method="POST">
+                        <button type="submit">+</button>
+                    </form>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="cart-summary">
+            <p><strong>Overall Total:</strong> ${{ "%.2f"|format(total) }}</p>
+        </div>
+
+        <div class="cart-actions">
+            <form action="{{ url_for('cart.clear') }}" method="POST">
+                <button type="submit">Clear Cart</button>
+            </form>
+            <form action="{{ url_for('cart.continue_shopping') }}" method="POST">
+                <button type="submit">Continue Shopping</button>
+            </form>
+            <form action="{{ url_for('cart.checkout') }}" method="POST">
+                <button type="submit">Checkout</button>
+            </form>
+        </div>
     {% endif %}
-    <!-- If cart is not empty -->
-    <table border="1">
-        <tr>
-            <th>Product</th>
-            <th>Unit Price</th>
-            <th>Quantity</th>
-            <th>Total for Product</th>
-            <th>Actions</th>
-        </tr>
-
-        {%for item in cart%}
-        <tr>
-            <td>{{ item.name }}</td>
-            <td>${{ "%.2f"|format(item.price) }}</td> 
-            <td>{{ item.quantity }}</td> 
-            <td>${{ "%.2f"|format(item.price * item.quantity) }}</td> 
-            <td>
-                <form action="{{ url_for('cart.remove_one', item_id=item.id) }}" method="POST" style="display: inline;"> 
-                    <button type="submit">-</button>
-                </form>
-                {{ item.quantity }}
-                <form action="{{ url_for('cart.add_one', item_id=item.id) }}" method="POST" style="display: inline;">
-                    <button type="submit">+</button>
-                </form>
-            </td>
-        </tr>
-        {% endfor %} 
-
-        <tr>
-            <td colspan="3">Overall Total</td>
-            <td>${{ "%.2f"|format(total) }}</td> 
-            <td>
-                <form action="{{url_for('cart.clear')}}" method="POST"> <!-- This calls url /cart/clean -->
-                    <button type="submit">Clear Cart</button>
-                </form>
-                <form action="{{url_for('cart.continue_shopping')}}" method="POST"> 
-                    <button type="submit">Continue Shopping</button>
-                </form>
-            </td>
-        </tr>
-        <tr>
-            <td colspan="3"></td>
-            <td>
-                <form action="{{ url_for('cart.checkout') }}" method="POST"> <!-- This calls url /cart/checkout -->
-                    <button type="submit">Checkout</button>
-                </form>
-            </td>
-        </tr>
-    </table>
 </div>
+
 {% endblock %}
