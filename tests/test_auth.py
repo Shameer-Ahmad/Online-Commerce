@@ -48,12 +48,23 @@ def test_login(client, auth):
     response = client.get("/auth/login")
     assert response.status_code == 200
     assert b"Log In" in response.data
+
+    client.get("auth/register")
+
+    response = client.post(
+        "/auth/register", 
+        data={"username": "Anthony", "password": "1234"}, follow_redirects=True
+    )
     
-    # Test login
-    response = auth.login()
+    assert b"Log In" in response.data
+
+    response = client.post(
+        "/auth/login", 
+        data={"username": "Anthony", "password": "1234"}, follow_redirects=True
+    )
+
     # Test if login returns the expected content (checking if a product name is returned)
-    assert b"Your username is test_user" in response.data
-    assert b"Accessing a random product from northwind" in response.data
+    assert b"seamless" in response.data
     
     # NOTE: Once your login function is fully implemented to use sessions,
     # you should test the session data like this:

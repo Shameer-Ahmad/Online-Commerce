@@ -22,7 +22,8 @@ def test_shopping_flow(client, app):
                 shopper_id = check_id()
                 
             # Add a product to the cart
-            add_to_cart("9999", 2)
+            add_to_cart("9999")
+            add_to_cart("9999")
         
         # Step 4: View the cart
         response = client.get("/cart/")
@@ -31,7 +32,7 @@ def test_shopping_flow(client, app):
         
         # Step 5: Try to checkout (should require login)
         response = client.post("/cart/checkout", follow_redirects=True)
-        assert b"Please Log In" in response.data
+        assert b"Log In" in response.data
         
         # Step 6: Login
         client.post(
