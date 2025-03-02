@@ -1,6 +1,7 @@
 import secrets
 from flask import Blueprint, session, request, g, render_template, redirect, url_for
 from datetime import datetime, timedelta
+from flask_login import login_required
 
 from app.db import get_db, init_db
 # from app.auth import login_required
@@ -97,7 +98,7 @@ def clean():
     one_month_ago = datetime.now() - timedelta(days=30)
 
     # Check intentions of this line with assignment
-    db.execute("DELETE FROM Shopping_Cart WHERE created_at < ?", (shopper_id, one_month_ago))
+    db.execute("DELETE FROM Shopping_Cart WHERE created_at < ?", (one_month_ago,))
     #db.execute("DELETE FROM cart WHERE shopper_id = ? AND created_at < ?", (shopper_id, one_month_ago))
 
     db.commit()
@@ -112,7 +113,12 @@ def checkout():
         return redirect(url_for('auth.login'))
 
     shopper_id = check_id()
-    items = db.execute("SELECT Shopping_Cart.product_id, Shopping_Cart.quantity, products.price FROM Shopping_Cart WHERE shopper_id = ?", (shopper_id,)).fetchall()
+    items = db.execute("""
+        SELECT Shopping_Cart.product_id, Shopping_Cart.quantity, Products.UnitPrice 
+        FROM Shopping_Cart 
+        JOIN Products ON Shopping_Cart.product_id = Products.ProductID 
+        WHERE shopper_id = ?
+    """, (shopper_id,)).fetchall()
 
     cost = calculate_total()
     
@@ -122,12 +128,16 @@ def checkout():
 
     # Insert every item from the cart associated with this user into the order_items table
     for item in items:
-        db.execute("INSERT INTO order_items (order_id, product_id, quantity, price) VALUES (?, ?, ?, ?)", (order_id, item['product_id'], item['quantity'], item['price'] ))
+        db.execute("INSERT INTO order_items (order_id, product_id, quantity, price, shopper_id) VALUES (?, ?, ?, ?, ?)", 
+                   (order_id, item['product_id'], item['quantity'], item['UnitPrice'], shopper_id))
+    
     
     clear()
     db.commit()
 
     # Delete anything from the entire cart where the product has been there for over a month
     clean()
+
+    return redirect(url_for('landing.landing_page'))
 
 

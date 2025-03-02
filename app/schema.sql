@@ -24,12 +24,14 @@ CREATE TABLE Shopping_Cart (
 CREATE TABLE order_items (
   id INTEGER PRIMARY KEY AUTOINCREMENT, 
   order_id INTEGER NOT NULL,
+  product_id INTEGER NOT NULL,
   user_id INTEGER,
   shopper_id TEXT NOT NULL,
   quantity INTEGER NOT NULL,
   price DECIMAL(10,2) NOT NULL,
   order_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (user_id) REFERENCES user (id)
+  FOREIGN KEY (product_id) REFERENCES Products(ProductID)
 );
 
 CREATE TABLE Authentication(

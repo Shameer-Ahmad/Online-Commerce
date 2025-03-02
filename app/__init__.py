@@ -1,5 +1,6 @@
 import os
 from flask import Flask, session
+from flask_login import LoginManager
 from app.db import init_db
 import secrets
 
@@ -26,6 +27,20 @@ def create_app(test_config=None):
     except OSError:
         pass
 
+     # Initialize Flask-Login
+    login_manager = LoginManager()
+    login_manager.login_view = 'auth.login'
+    login_manager.init_app(app)
+
+    @login_manager.user_loader
+    def load_user(user_id):
+        from app.db import get_db
+        user = get_db().execute(
+            'SELECT * FROM user WHERE id = ?', (user_id,)
+        ).fetchone()
+        return user
+
+    # Initialize the database
     from . import db
     db.init_app(app)
 
